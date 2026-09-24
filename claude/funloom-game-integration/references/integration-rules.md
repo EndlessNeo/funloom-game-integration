@@ -94,6 +94,7 @@ If the game already lets users enter their own AI key, preserve that local/self-
 - Existing user-provided keys may stay in the game's current local config if that is already the product behavior.
 - Funloom official AI must go through the game server or serverless layer with `@funloom/sdk/server`; never put an official AI key, `appSecret`, or chargeable AI call in browser code.
 - Server calls should use `funloom.ai.chatCompletions()` with a scene-specific `sceneCode`, explicit `diamondCost` or product-controlled cost, and a stable `idempotencyKey`.
+- A stable AI `idempotencyKey` deduplicates the Funloom wallet consume order only; it does not deduplicate the provider call or `traceId`. The current provider-first flow can return an API error after a successful model call if diamond consumption fails.
 - The browser may expose a provider switch such as `local` / `funloom`, but it should call the game backend for Funloom mode.
 - Before wiring Funloom official AI, identify every existing AI surface: text chat, narrative generation, structured JSON generation, image generation, voice, embeddings, moderation, or reranking. Ask the creator which surfaces should move to Funloom and which should stay self-key/local.
 - Explain the available Funloom official AI channels before asking: Doubao official Volcengine and the ggb proxy. Current default recommendation is ggb proxy for official AI, DeepSeek text model `deepseek-v4.1-flash`, and ggb image2 for image generation.
@@ -114,6 +115,9 @@ External games and SDKs should not receive WeChat or payment provider credential
 ## Webhook Rules
 
 - Verify signature before trusting payloads.
+- The payload envelope contains `id`, `type`, `appId`, `createdAt`, and `data`.
+- Signature verification uses the raw body: `secretHash = SHA256(webhookSecret)`, then `v1=HMAC-SHA256(secretHash, timestamp + "." + rawBody)`.
 - Make handlers idempotent.
 - Store event ids or order ids when needed to prevent duplicate effects.
+- Return non-2xx for verification or processing failure so the platform can retry; return 2xx only after the event has been accepted or safely recorded.
 - Refresh or reconcile player state after payment success rather than relying only on frontend redirects.

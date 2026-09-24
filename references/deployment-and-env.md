@@ -40,12 +40,12 @@ Keep these meanings separate:
 
 Do not fill `FUNLOOM_FRONTEND_BASE_URL` with the external game's URL. Do not infer the Funloom platform frontend from a Cloudflare Worker name or from the current browser URL.
 
-For standard Funloom OpenAPI hosts, the platform backend should infer the matching frontend and return absolute browser URLs:
+For standard Funloom OpenAPI hosts, the platform backend may infer the matching frontend for a server-created recharge `checkoutUrl`:
 
 - test OpenAPI host -> test Funloom platform frontend
 - production OpenAPI host -> production Funloom platform frontend
 
-This is an implementation responsibility for Codex to check while integrating or debugging; do not turn it into an onboarding question for ordinary creators. Only use `FUNLOOM_FRONTEND_BASE_URL`, `EXTERNAL_RECHARGE_BASE_URL`, or equivalent deployed secrets as explicit overrides for non-standard preview/custom environments or while repairing a missing platform mapping.
+This inference does not create the Browser SDK authorization URL. When the Browser SDK calls `buildAuthorizeUrl()` or `buildCheckoutUrl()`, pass the correct `FUNLOOM_FRONTEND_BASE_URL` (or legacy `authBaseUrl`) explicitly; its `apiBaseUrl` fallback is only compatibility behavior. Do not turn environment selection into an onboarding question for ordinary creators. Use explicit server frontend/recharge overrides only for non-standard preview/custom environments or while repairing a missing platform mapping.
 
 ## Framework Env Rules
 

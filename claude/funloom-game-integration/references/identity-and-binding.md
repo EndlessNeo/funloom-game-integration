@@ -33,28 +33,24 @@ unique(appId, externalUserId)
 
 Use a stable game-side user id. Avoid naked global autoincrement ids in public guidance unless the backend scopes them by app id. Do not use phone numbers, emails, nicknames, or browser-only guest ids as the OpenAPI identity unless the project explicitly accepts those privacy and stability tradeoffs.
 
-## Conflict And Rebind
+## Current Funloom Binding Behavior
 
-When a binding conflict occurs:
+In the current external OpenAPI implementation, auth-code exchange and direct binding are automatic within one `appId`:
 
-- identify whether the Funloom user is bound in the same app or another app
-- identify whether the previous game account still exists
-- offer account recovery if the old game account exists
-- offer explicit rebind if product policy allows it
-- show the current and target account labels before rebinding
-- never ask ordinary users to delete database rows manually
+- an existing active link for the same Funloom user can be replaced by the new external user
+- an existing active link for the same external user can be updated to the new Funloom user
+- the API does not currently return `FUNLOOM_USER_ALREADY_LINKED`, `already_bound`, or `rebind_required`
+
+Because this can move the platform binding, the game should show the current and target game accounts and require confirmation before calling a flow that may rebind. Preserve an old-account recovery path and never ask ordinary users to delete database rows manually.
 
 ## Idempotent Account And Binding States
 
-Account registration, login, binding, and rebinding should return explicit states the game can handle:
+The game's own account registration and login may return explicit states such as:
 
 - `already_registered` when the same credential maps to an existing game account
-- `already_bound` when the Funloom user is already bound under the relevant app scope
 - `cancelled` or `denied` when the user refuses authorization
-- `rebind_required` when policy allows moving the binding but needs confirmation
-- `binding_conflict` when automatic recovery is unsafe
 
-Do not let duplicate registration create a new game user that silently loses the previous Funloom binding or paid inventory.
+Do not let duplicate registration create a new game user that silently loses the previous Funloom binding or paid inventory. Treat the current Funloom automatic rebind as a state-changing operation, not as an API conflict that the game can wait to receive.
 
 ## Cancel, Reject, Retry
 
@@ -63,6 +59,6 @@ Handle authorization outcomes explicitly:
 - approved: persist binding and refresh balance
 - rejected/cancelled: clear local pending state and return to unbound UI
 - error: show retry and diagnostics
-- already bound: route to recovery or rebind
+- binding may replace an active link: show the target account and require confirmation before retrying
 
 If switching Funloom accounts is required, that capability belongs on the Funloom authorization page. The external game should not clear Funloom cookies or pretend it can change platform login state.

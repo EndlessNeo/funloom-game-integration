@@ -58,14 +58,15 @@ Do not ask the external game to provide payment keys.
 
 If the same payment flow works in production but not in staging/test, compare platform backend secrets and notify URLs before editing SDK or external game code.
 
-## Binding Conflict
+## Automatic Rebind / Binding Moved
 
-If a Funloom user appears "already bound":
+The current OpenAPI binding endpoints do not return an "already bound" conflict. They may automatically replace an active link within the same `appId`. If a Funloom user appears to move between game accounts:
 
 - Check whether binding is scoped by app id.
 - Check whether the previous external user still exists.
-- If product policy allows rebinding, provide a server-side rebind flow rather than asking users to edit the database manually.
 - Show the target account and consequences before rebinding.
+- Preserve an old-account recovery path and record the new mapping after the operation.
+- Do not ask users to edit or delete database rows manually.
 
 ## Rejected Binding Opens The Same Funloom Account
 
