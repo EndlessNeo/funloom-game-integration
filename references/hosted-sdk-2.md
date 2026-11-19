@@ -10,6 +10,14 @@ Use this path only when the game package is uploaded to Funloom Advanced Custom 
 - Keep a custom backend only for game-owned services or data that the game itself must own. Do not proxy Hosted capabilities through it or duplicate Funloom's wallet, recharge orders, AI charges, or host-managed saves.
 - Hosted SDK communicates with the parent through the platform bridge; it is not an HTTP OpenAPI client and does not expose platform tokens or secrets to the game.
 
+## Package Version And Environments
+
+- Use `@funloom/sdk@^0.1.2` or a compatible newer version for Hosted games. npm package `0.1.1` does not export `@funloom/sdk/hosted`. Hosted SDK 2.0 describes the bridge protocol, not an npm package version requirement of `2.0.0`.
+- Leave `hostOrigin` unset for standard Funloom uploads. It follows the current hosted package URL's origin. Do not pin the test platform's origin or API URLs in a game package intended for production.
+- When a creator moves the game to a newly created production app, update any explicit `appId` check and rebuild the upload package. Configure capabilities, matching AI `sceneCode` entries, and items on that production app; a blank app does not inherit test configuration, saves, inventory, or sessions.
+- Read `runtime.environment` from the host. Treat `creator_test` and `published` as runtime modes, independent of whether the platform deployment itself is test or production.
+- Hosted games do not need external-game OAuth callbacks. Payment notification URLs remain the platform backend's environment configuration and are not discovered or rewritten by the game SDK.
+
 ## Typical Setup
 
 ```ts
