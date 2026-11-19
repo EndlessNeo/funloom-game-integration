@@ -9,7 +9,7 @@ Public creator onboarding should use the official npm distribution documented in
 - `@funloom/sdk` for server, browser, and webhook helpers
 - `@funloom/cli` for the `funloom` command
 
-The current public docs list `@funloom/sdk@0.1.1` and `@funloom/cli@0.1.1`. If newer SDK docs are supplied, use those docs as the source of truth.
+The current public docs list `@funloom/sdk@0.1.2` and `@funloom/cli@0.1.2`. If newer SDK docs are supplied, use those docs as the source of truth.
 
 Record:
 

@@ -9,7 +9,7 @@ Current public creator guidance starts with Funloom platform developer mode to c
 - `npm install @funloom/sdk`
 - `npm install -g @funloom/cli`
 
-The current public docs list `@funloom/sdk@0.1.1` and `@funloom/cli@0.1.1`. If the workspace provides newer Funloom SDK docs, treat those docs as the source of truth for package versions and method names.
+The current public docs list `@funloom/sdk@0.1.2` and `@funloom/cli@0.1.2`. If the workspace provides newer Funloom SDK docs, treat those docs as the source of truth for package versions and method names.
 
 Use the target project's package manager and update its lockfile. Do not present internal local paths, absolute workspace paths, or Git dependencies as the normal creator experience unless the user explicitly says they are testing an unpublished SDK fork. If npm installation or CLI commands fail, classify that as a packaging, registry, or platform tooling regression to diagnose, not as evidence that public onboarding should fall back to local paths.
 
